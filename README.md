@@ -18,5 +18,5 @@ Simulation d’ordonnancement de processus pour un système d’exploitation, en
 
 ## Usage
 1. Compiler : `make`
-2. Lancer le simulateur : `./simulateur [fichier_processus.txt]`
-3. Exporter les résultats en CSV ou afficher graphiquement
+2. Lancer le simulateur : `./scheduler [fichier_processus.txt] [ALGO_D'ORDONNANCEMENT ex: FIFO, SJF, SRJF ou RR]` 
+3. Les résultats sont exportés dans un fichier CSV et afficher dans le terminal
