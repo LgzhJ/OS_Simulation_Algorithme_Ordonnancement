@@ -1,0 +1,9 @@
+# Fichier de test — Simulateur FIFO
+# Format : PID  arrival_time  cpu_burst  io_burst
+# Unité   : millisecondes (ms)
+
+1   0   8   2
+2   1   4   0
+3   2   9   3
+4   3   5   1
+5   5   2   0
