@@ -31,7 +31,22 @@ static int compare_burst(const void *a, const void *b)
 
 void sjf_schedule(Process processes[], int n){
     int current_time = 0; /* Horloge du simulateur (ms) */
-
+    
+    int done[n];
+    for (int j = 0; j < n; j++) {
+        done[j] = 0;
+    }
+    //
+    Process temp[n];
+    for (int i = 0; i < n; i++) {
+        Process *p = &processes[i];
+        if (!done[i] && current_time >= p->arrival_time) {
+            temp[i] = p;
+        }
+        qsort(temp, n, sizeof(Process), compare_burst);
+        
+    }
+    //
     /* Étape 1 : trier les processus leur durée de cycle */
     qsort(processes, n, sizeof(Process), compare_burst);
 
