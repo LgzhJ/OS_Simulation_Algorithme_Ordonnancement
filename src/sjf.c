@@ -20,7 +20,11 @@ static int compare_burst(const void *a, const void *b)
 {
     const Process *pa = (const Process *)a;
     const Process *pb = (const Process *)b;
-    return pa->cpu_burst - pb->cpu_burst;
+    if (pa->cpu_burst != pb->cpu_burst)
+        return pa->cpu_burst - pb->cpu_burst;
+    if (pa->arrival_time != pb->arrival_time)
+        return pa->arrival_time - pb->arrival_time;
+    return pa->pid - pb->pid;
 }
 
 void sjf_schedule(Process processes[], int n){
