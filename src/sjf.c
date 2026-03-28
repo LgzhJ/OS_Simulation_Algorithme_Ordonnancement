@@ -7,16 +7,17 @@
  * ----------------------------------------------------------------------- */
 
 /**
- * @brief Compare deux processus par leur durée du cycle CPU.
+ * @brief Compare deux processus par leur durée de cycle CPU.
  *
- * Fonction de comparaison utilisée par qsort() pour trier les processus
- * dans l'ordre croissant des durées de cycle.
+ * Fonction de comparaison utilisée pour sélectionner le processus
+ * au cpu_burst minimal parmi les processus disponibles à l'instant t.
  *
  * @param a  Pointeur vers le premier processus
  * @param b  Pointeur vers le second processus
- * @return   Négatif si durée du cyle de a plus petit que b, positif sinon, 0 si égalité
+ * @return   Négatif si a est plus court que b, positif sinon, 0 si égalité
  */
-static int compare_burst(const void *a, const void*b){
+static int compare_burst(const void *a, const void *b)
+{
     const Process *pa = (const Process *)a;
     const Process *pb = (const Process *)b;
     return pa->cpu_burst - pb->cpu_burst;
