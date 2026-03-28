@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "fifo.h"
+#include "file.h"
 
 /* -----------------------------------------------------------------------
  * Fonctions internes (static = non visibles hors de ce fichier)
@@ -38,9 +39,10 @@ static int compare_arrival(const void *a, const void *b)
  * @brief Exécute l'algorithme FIFO sur un tableau de processus.
  *
  * Principe :
- *   - Les processus sont triés par date d'arrivée (ordre FIFO).
- *   - Le CPU exécute chaque processus jusqu'à la fin de son cycle CPU
- *     (algorithme non-préemptif).
+ *   - Les processus sont triés par date d'arrivée puis placés dans une
+ *     file d'attente (FileTQ) représentant la file prête du système.
+ *   - Le CPU dépile les processus un par un et les exécute jusqu'à la
+ *     fin de leur cycle CPU (algorithme non-préemptif).
  *   - Si le CPU est libre avant l'arrivée du prochain processus,
  *     il reste inactif (temps mort).
  *   - Les E/S sont parallélisées : elles n'empêchent pas le CPU
@@ -59,40 +61,52 @@ static int compare_arrival(const void *a, const void *b)
 void fifo_schedule(Process processes[], int n)
 {
     int current_time = 0; /* Horloge du simulateur (ms) */
+    FileTQ file_prete;    /* File d'attente des processus prêts */
+    Process p;            /* Processus en cours de traitement */
 
     /* Étape 1 : trier les processus par ordre d'arrivée */
     qsort(processes, n, sizeof(Process), compare_arrival);
 
-    /* Étape 2 : simuler l'exécution FIFO */
+    /* Étape 2 : placer tous les processus dans la file d'attente */
+    file_init(&file_prete);
     for (int i = 0; i < n; i++) {
-        Process *p = &processes[i];
+        file_enfiler(&file_prete, processes[i]);
+    }
+
+    /* Étape 3 : simuler l'exécution FIFO en vidant la file */
+    int i = 0;
+    while (!file_est_vide(&file_prete)) {
+        file_defiler(&file_prete, &p);
 
         /*
          * Si le CPU est libre AVANT l'arrivée du prochain processus,
          * on avance l'horloge jusqu'à son arrivée (temps mort CPU).
          */
-        if (current_time < p->arrival_time) {
-            current_time = p->arrival_time;
+        if (current_time < p.arrival_time) {
+            current_time = p.arrival_time;
         }
 
         /* Le processus commence à s'exécuter */
-        p->start_time = current_time;
+        p.start_time = current_time;
 
         /* Il s'exécute pendant toute la durée de son cycle CPU */
-        p->finish_time = p->start_time + p->cpu_burst;
+        p.finish_time = p.start_time + p.cpu_burst;
 
         /* Calcul des indicateurs de performance */
-        p->response_time   = p->start_time  - p->arrival_time;
-        p->turnaround_time = p->finish_time  - p->arrival_time;
+        p.response_time   = p.start_time  - p.arrival_time;
+        p.turnaround_time = p.finish_time  - p.arrival_time;
 
         /*
          * Temps d'attente = temps de restitution - temps utile (CPU)
          * Note : on ne compte PAS l'E/S dans le temps d'attente
          * car les E/S sont parallélisées.
          */
-        p->waiting_time = p->turnaround_time - p->cpu_burst;
+        p.waiting_time = p.turnaround_time - p.cpu_burst;
 
         /* L'horloge avance après la fin du cycle CPU */
-        current_time = p->finish_time;
+        current_time = p.finish_time;
+
+        /* On recopie le processus mis à jour dans le tableau d'origine */
+        processes[i++] = p;
     }
 }
