@@ -12,8 +12,11 @@ OBJ_DIR = obj
 BIN     = scheduler
 
 SRCS = $(SRC_DIR)/main.c \
+	   $(SRC_DIR)/file.c \
        $(SRC_DIR)/fifo.c \
        $(SRC_DIR)/sjf.c \
+	   $(SRC_DIR)/rr.c \
+	   #$(SRC_DIR)/srjf.c \
        $(SRC_DIR)/metrics.c
 
 OBJS = $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
