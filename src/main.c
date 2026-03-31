@@ -22,6 +22,7 @@
 #include "process.h"
 #include "fifo.h"
 #include "sjf.h"
+#include "rr.h"
 #include "metrics.h"
 
 /**
@@ -110,6 +111,21 @@ int main(int argc, char *argv[])
 
         /* Sauvegarde CSV */
         save_csv(processes, n, "SJF", "resultats_sjf.csv");
+    }
+    else if (strcmp(algo, "RR") == 0) {
+        /* Le quantum est obligatoire pour RR */
+        if (argc < 4) {
+            fprintf(stderr, "Erreur : RR nécessite un quantum (ex: ./scheduler procs.txt RR 4)\n");
+            return 1;
+        }
+        int quantum = atoi(argv[3]);
+        if (quantum <= 0) {
+            fprintf(stderr, "Erreur : le quantum doit être un entier strictement positif.\n");
+            return 1;
+        }
+        rr_schedule(processes, n, quantum);
+        print_metrics(processes, n, "RR");
+        save_csv(processes, n, "RR", "resultats_rr.csv");
     }
     else {
         fprintf(stderr, "Algorithme inconnu : %s\n", mode_algo);
