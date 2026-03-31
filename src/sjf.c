@@ -29,58 +29,57 @@ static int compare_burst(const void *a, const void *b)
     return pa->pid - pb->pid;
 }
 
-void sjf_schedule(Process processes[], int n){
-    int current_time = 0; /* Horloge du simulateur (ms) */
-    
+int isDone(int tab[], int n){
+    for(int i = 0; i < n; i++){
+        if(tab[i] != 1) {
+            return 0;
+        }        
+    }
+    return 1;
+}
+
+void sjf_schedule(Process processes[], int n) {
+    int current_time = 0;
     int done[n];
-    for (int j = 0; j < n; j++) {
-        done[j] = 0;
-    }
-    //
-    Process temp[n];
-    for (int i = 0; i < n; i++) {
-        Process *p = &processes[i];
-        if (!done[i] && current_time >= p->arrival_time) {
-            temp[i] = p;
-        }
-        qsort(temp, n, sizeof(Process), compare_burst);
-        
-    }
-    //
-    /* Étape 1 : trier les processus leur durée de cycle */
-    qsort(processes, n, sizeof(Process), compare_burst);
+    for (int j = 0; j < n; j++) done[j] = 0;
 
-    /* Étape 2 : simuler l'exécution SJF */
-    for (int i = 0; i < n; i++) {
-        Process *p = &processes[i];
-
-        /*
-         * Si le CPU est libre AVANT l'arrivée du prochain processus,
-         * on avance l'horloge jusqu'à son arrivée (temps mort CPU).
-         */
-        if (current_time < p->arrival_time) {
-            current_time = p->arrival_time;
+    while (!isDone(done, n)) {
+        // 1. Collecter les processus prêts
+        Process temp[n];
+        int count = 0;
+        for (int i = 0; i < n; i++) {
+            if (!done[i] && current_time >= processes[i].arrival_time) {
+                temp[count++] = processes[i];
+            }
         }
 
-        /* Le processus commence à s'exécuter */
-        p->start_time = current_time;
+        // Aucun processus prêt → avancer le temps
+        if (count == 0) {
+            current_time++;
+            continue;
+        }
 
-        /* Il s'exécute pendant toute la durée de son cycle CPU */
-        p->finish_time = p->start_time + p->cpu_burst;
+        // 2. Trier et choisir UNIQUEMENT le premier (plus petit burst)
+        qsort(temp, count, sizeof(Process), compare_burst);
+        Process p = temp[0]; // ← on n'exécute QUE celui-là
 
-        /* Calcul des indicateurs de performance */
-        p->response_time   = p->start_time  - p->arrival_time;
-        p->turnaround_time = p->finish_time  - p->arrival_time;
+        // 3. Exécuter ce seul processus
+        p.start_time = current_time;
+        p.finish_time = current_time + p.cpu_burst;
+        p.response_time = p.start_time  - p.arrival_time;
+        p.turnaround_time = p.finish_time  - p.arrival_time;
+        p.waiting_time = p.turnaround_time - p.cpu_burst;
+        current_time = p.finish_time;
 
-        /*
-         * Temps d'attente = temps de restitution - temps utile (CPU)
-         * Note : on ne compte PAS l'E/S dans le temps d'attente
-         * car les E/S sont parallélisées.
-         */
-        p->waiting_time = p->turnaround_time - p->cpu_burst;
-
-        /* L'horloge avance après la fin du cycle CPU */
-        current_time = p->finish_time;
+        // 4. Marquer comme terminé
+        for (int i = 0; i < n; i++) {
+            if (!done[i] && processes[i].pid == p.pid) {
+                processes[i] = p;
+                done[i] = 1;
+                break;
+            }
+        }
+        // 5. Retour au while → on réévalue avec les nouveaux arrivants
     }
 }
 

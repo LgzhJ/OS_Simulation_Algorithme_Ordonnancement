@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
         print_metrics(processes, n, "SJF");
 
         /* Sauvegarde CSV */
-        save_csv(processes, n, "FIFO", "resultats_sjf.csv");
+        save_csv(processes, n, "SJF", "resultats_sjf.csv");
     }
     else {
         fprintf(stderr, "Algorithme inconnu : %s\n", mode_algo);
