@@ -69,12 +69,10 @@ Les valeurs après `arrival_time` alternent cycles CPU et cycles E/S. La premiè
 ```
 
 **Règles de validation (ligne ignorée en cas d'erreur) :**
-- Cycle CPU à 0 ms → erreur
-- Valeur négative → erreur
-- Plus de 8 cycles CPU par processus → erreur
-- Aucun cycle CPU déclaré → erreur
-
-**Note sur l'E/S finale :** si le dernier élément d'une ligne est un cycle E/S (après le dernier CPU), il est parallélisé et n'entre pas dans le calcul du turnaround ni du waiting_time.
+- 
+-
+- 
+- 
 
 ## Algorithmes
 
