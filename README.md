@@ -35,7 +35,7 @@ make doc
 ```
 
 ## Utilisation
-Lancer le simulateur sur un algo précis : `./scheduler <fichier_processus.txt> <ALGO> <quantum>` 
+Lancer le simulateur sur un algo précis : `./scheduler <fichier_processus.txt> <ALGO> [quantum]` 
 Les résultats sont exportés dans un fichier CSV et afficher dans le terminal
 
 | Paramètre | Description |
@@ -53,7 +53,7 @@ Les résultats sont exportés dans un fichier CSV et afficher dans le terminal
 ```
 
 ## Format du fichier d'entrée
-Une ligne par processus. Les lignes vides et celles commençant par `#` sont ignorées.
+Une ligne par processus.
 ```
 PID  arrival_time  cpu0 [io0  cpu1 [io1  cpu2 ...]]
 ```
@@ -63,9 +63,12 @@ Les valeurs après `arrival_time` alternent cycles CPU et cycles E/S. La premiè
 1      0    8     2
 2      1    4     0
 3      2    9     3
-
-# Multi-burst : PID  arr  cpu0  io0  cpu1  io1  cpu2
-6      0    6     3    4    2    2
+```
+```
+# PID  arr  cpu0  io0  cpu1  io1  cpu2
+4      0    6     3    4    2    2
+5      4    7     2    4    1    5
+6      4    6     8    1    3    3
 ```
 
 **Règles de validation (ligne ignorée en cas d'erreur) :**
