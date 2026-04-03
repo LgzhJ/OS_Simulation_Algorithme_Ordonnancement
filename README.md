@@ -16,19 +16,20 @@ Simulateur en C d'algorithmes d’ordonnancement de processus. Produit des métr
 - Génération automatique de graphiques via Office / LibreOffice
 - Gestion des E/S non parallélisables
 
-## Usage
+## Compilation
 1. Compiler le projet : `make`
 2. Compile et lance les 4 algos sur le fichier sur le fichier de test : `make run`
 3. Supprimer les .o, le binaire et les CSV : `make clean`
 4. Générer la documentation Doxygen : `make doc`
-5. Lancer le simulateur sur un algo précis : `./scheduler <fichier_processus.txt> <ALGO_D'ORDONNANCEMENT ex: FIFO, SJF, SRJF ou RR> <quantum pour RR>` 
-6. Les résultats sont exportés dans un fichier CSV et afficher dans le terminal
 
 | Paramètre | Description |
 |-----------|-------------|
 | `fichier.txt` | Fichier de processus (voir format ci-dessous) |
 | `ALGO` | `FIFO`, `SJF`, `RR` ou `SRJF` |
 | `quantum` | Durée du quantum en ms — obligatoire pour `RR` |
+
+Lancer le simulateur sur un algo précis : `./scheduler <fichier_processus.txt> <ALGO_D'ORDONNANCEMENT ex: FIFO, SJF, SRJF ou RR> <quantum pour RR>` 
+Les résultats sont exportés dans un fichier CSV et afficher dans le terminal
 
 **Exemples :**
 ```bash
