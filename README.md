@@ -34,6 +34,7 @@ make clean
 make doc
 ```
 
+## Utilisation
 Lancer le simulateur sur un algo précis : `./scheduler <fichier_processus.txt> <ALGO> <quantum>` 
 Les résultats sont exportés dans un fichier CSV et afficher dans le terminal
 
@@ -66,3 +67,27 @@ Les valeurs après `arrival_time` alternent cycles CPU et cycles E/S. La premiè
 # Multi-burst : cpu0  io0  cpu1  io1  cpu2
 6      0    6     3    4    2    2
 ```
+
+**Règles de validation (ligne ignorée en cas d'erreur) :**
+- Cycle CPU à 0 ms → erreur
+- Valeur négative → erreur
+- Plus de 8 cycles CPU par processus → erreur
+- Aucun cycle CPU déclaré → erreur
+
+**Note sur l'E/S finale :** si le dernier élément d'une ligne est un cycle E/S (après le dernier CPU), il est parallélisé et n'entre pas dans le calcul du turnaround ni du waiting_time.
+
+## Algorithmes
+
+| Algo | Type | Critère de sélection |
+|------|------|----------------------|
+| `FIFO` | Non-préemptif | Date à laquelle le processus est devenu prêt, puis PID |
+| `SJF` | Non-préemptif | Durée du burst CPU courant (plus court d'abord), puis date d'arrivée, puis PID |
+| `RR` | Préemptif | File circulaire, quantum fixe |
+| `SRJF` | Préemptif | Temps CPU restant dans le burst courant (plus court d'abord) |
+
+## Métriques produites
+
+## Structure du projet
+
+## Auteurs
+NOM1 (xx%) · NOM2 (xx%) · NOM3 (xx%)
