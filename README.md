@@ -13,25 +13,38 @@ Simulateur en C d'algorithmes d'ordonnancement de processus. Produit des métriq
 
 ## Extensions possibles
 - Interface graphique pour la restitution des résultats
-- Génération automatique de graphiques via Office / LibreOffice
-- Gestion des E/S non parallélisables
+- Intégration d'autres logiques d'ordonnancement
 
 ## Compilation
+Avant de compiler, assurez-vous que tous les fichiers source sont placés dans le répertoire de votre choix sous Linux.
+
 1. Compiler le projet :
 ```bash
 make
 ```
-2. Compiler et lancer les 4 algos sur le fichier de test :
+2. Installer les dépendances Python pour la génération des graphiques :
+```bash
+make deps
+```
+3. Compiler et lancer les 4 algos sur le fichier de test :
 ```bash
 make run
 ```
-3. Supprimer les `.o`, le binaire et les CSV :
+4. Supprimer les `.o`, le binaire et les CSV :
 ```bash
 make clean
 ```
-4. Générer la documentation Doxygen :
+5. Permet de clean + supprimer les dépendances python et venv :
+```bash
+make cleanall
+```
+6. Générer la documentation Doxygen :
 ```bash
 make doc
+```
+7. Permet d'afficher l'aide :
+```bash
+make help
 ```
 
 ## Utilisation
@@ -52,6 +65,32 @@ Les valeurs par défaut sont lues dans `conf.ini`. Les arguments CLI ont toujour
 ./scheduler data/test_processus.txt SJF
 ./scheduler data/test_processus.txt RR 4
 ./scheduler data/test_processus.txt SRJF
+```
+
+## Génération des graphiques
+
+Les résultats des simulations sont enregistrés dans des fichiers CSV.  
+Un script Python permet ensuite de générer automatiquement des graphiques à partir de ces données.
+
+Les graphiques produits permettent de visualiser et comparer les performances des différents algorithmes d’ordonnancement.
+
+| Fichier | Description |
+|--------|-------------|
+| `resultats_*.csv` | Résultats générés par le simulateur |
+| `graph.py` | Script Python qui génère les graphiques |
+| `*.png` | Graphiques exportés |
+| `*.xlsx` | Graphiques exportés pour LibreOffice |
+
+**Exemple d'utilisation :**
+
+```bash
+python3 graph.py resultats_fifo.csv
+```
+
+**Dépendance python :**
+
+```bash
+pandas, matplotlib, openpyxl
 ```
 
 ## Format du fichier d'entrée
@@ -108,7 +147,11 @@ Les valeurs après `arrival_time` alternent cycles CPU et cycles E/S. La premiè
 │       ├── sjf.c / .h      # Algorithme SJF
 │       ├── rr.c / .h       # Algorithme Round Robin
 │       └── srjf.c / .h     # Algorithme SRJF
-├── data/                   # Fichiers de processus d'exemple
+├── .venv/                  # Environnement virtuel Python pour isoler les dépendances
+├── .pip-deps               # Liste des dépendances Python installées
+├── data/                   # Dossiers des listes de processus
+├── resultats_graphes/      # Dossier contenant les graphes
+├── graphes.py              # Permet de créer les diagrammes à partir de fichier csv
 ├── conf.ini                # Configuration par défaut
 └── Makefile
 ```
